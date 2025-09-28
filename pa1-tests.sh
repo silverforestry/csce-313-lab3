@@ -49,10 +49,10 @@ echo -e "\nSCORE: ${SCORE}/85\n"
 # Test 2 part 2
 ./client -p 1
 if diff -qwB <(head -n 1000 BIMDC/1.csv) received/x1.csv >/dev/null; then
-        echo -e "  ${GREEN}Passed${NC}"
+        echo -e "  ${GREEN}Passed ..${NC}"
         SCORE=$(($SCORE+10))
 else
-        echo -e "  ${RED}Failed${NC}"
+        echo -e "  ${RED}Failed ..${NC}"
 fi
 echo -e "\nSCORE: ${SCORE}/85\n"
 

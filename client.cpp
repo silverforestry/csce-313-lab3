@@ -19,6 +19,7 @@
 
 
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -102,26 +103,6 @@ int main (int argc, char *argv[]) {
 				// make a directory, make a file using fout to receive x1.csv, write into it
 				// but it under received/x.1csv
 				
-				t = i * 0.004;
-				e = 1;
-				datamsg dmsg(p, t, e);
-				memcpy(buf, &dmsg, sizeof(datamsg));
-				chan.cwrite(buf, sizeof(datamsg));
-				double reply1;
-				chan.cread(&reply1, sizeof(double)); 
-				e = 2;
-				datamsg dmsg2(p, t, e);
-				memcpy(buf, &dmsg2, sizeof(datamsg));
-				chan.cwrite(buf, sizeof(datamsg));
-				double reply2;
-				chan.cread(&reply2, sizeof(double));
-				string reply = to_string(t) + "," + to_string(reply1) + "," + to_string(reply2) + "\n";
-
-				fwrite(reply.c_str(), reply.size(), 1, fout);
-				fseek (fout, 0, SEEK_END);
-				
-
-				
 				// t = i * 0.004;
 				// e = 1;
 				// datamsg dmsg(p, t, e);
@@ -129,43 +110,63 @@ int main (int argc, char *argv[]) {
 				// chan.cwrite(buf, sizeof(datamsg));
 				// double reply1;
 				// chan.cread(&reply1, sizeof(double)); 
-
-
 				// e = 2;
 				// datamsg dmsg2(p, t, e);
 				// memcpy(buf, &dmsg2, sizeof(datamsg));
 				// chan.cwrite(buf, sizeof(datamsg));
 				// double reply2;
 				// chan.cread(&reply2, sizeof(double));
+				// string reply = to_string(t) + "," + to_string(reply1) + "," + to_string(reply2) + "\n";
 
-				// string time = to_string(t);
-				// ostringstream oss;
-				// oss << setprecision(3) << fixed << t;
-				// time = oss.str();
-				// time.erase(time.find_last_not_of('0') + 1, string::npos);
-				// if (time.back() == '.') time.pop_back();
-
-				// string reply1_str = to_string(reply1);
-				// oss.str("");
-				// oss << setprecision(3) << fixed << reply1;
-				// reply1_str = oss.str();
-				// reply1_str.erase(reply1_str.find_last_not_of('0') + 1, string::npos);
-				// if (reply1_str.back() == '.') reply1_str.pop_back();
-
-				// string reply2_str = to_string(reply2);
-				// oss.str("");
-				// oss << setprecision(3) << fixed << reply2;
-				// reply2_str = oss.str();
-				// reply2_str.erase(reply2_str.find_last_not_of('0') + 1, string::npos);
-				// if (reply2_str.back() == '.') reply2_str.pop_back();
-
-				// // cout << time;
-
-				// string reply = time + "," + reply1_str + "," + reply2_str;
-
-				// fwrite(reply.c_str(), sizeof(char), reply.length(), fout);
-				// fwrite("\n", sizeof(char), 1, fout);
+				// fwrite(reply.c_str(), reply.size(), 1, fout);
 				// fseek (fout, 0, SEEK_END);
+				
+
+				
+				t = i * 0.004;
+				e = 1;
+				datamsg dmsg(p, t, e);
+				memcpy(buf, &dmsg, sizeof(datamsg));
+				chan.cwrite(buf, sizeof(datamsg));
+				double reply1;
+				chan.cread(&reply1, sizeof(double)); 
+
+
+				e = 2;
+				datamsg dmsg2(p, t, e);
+				memcpy(buf, &dmsg2, sizeof(datamsg));
+				chan.cwrite(buf, sizeof(datamsg));
+				double reply2;
+				chan.cread(&reply2, sizeof(double));
+
+				string time = to_string(t);
+				ostringstream oss;
+				oss << setprecision(3) << fixed << t;
+				time = oss.str();
+				time.erase(time.find_last_not_of('0') + 1, string::npos);
+				if (time.back() == '.') time.pop_back();
+
+				string reply1_str = to_string(reply1);
+				oss.str("");
+				oss << setprecision(3) << fixed << reply1;
+				reply1_str = oss.str();
+				reply1_str.erase(reply1_str.find_last_not_of('0') + 1, string::npos);
+				if (reply1_str.back() == '.') reply1_str.pop_back();
+
+				string reply2_str = to_string(reply2);
+				oss.str("");
+				oss << setprecision(3) << fixed << reply2;
+				reply2_str = oss.str();
+				reply2_str.erase(reply2_str.find_last_not_of('0') + 1, string::npos);
+				if (reply2_str.back() == '.') reply2_str.pop_back();
+
+				// cout << time;
+
+				string reply = time + "," + reply1_str + "," + reply2_str;
+
+				fwrite(reply.c_str(), sizeof(char), reply.length(), fout);
+				fwrite("\n", sizeof(char), 1, fout);
+				fseek (fout, 0, SEEK_END);
 			}
 			fclose(fout);
 		}
