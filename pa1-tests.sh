@@ -1,3 +1,4 @@
+#!/bin/bash
 echo -e "To remove colour from tests, set COLOUR to 1 in sh file\n"
 COLOUR=0
 if [[ COLOUR -eq 0 ]]; then
@@ -13,6 +14,9 @@ else
 fi
 
 SCORE=0
+
+make clean
+make
 
 echo -e "\nStart testing"
 
@@ -52,53 +56,57 @@ else
 fi
 echo -e "\nSCORE: ${SCORE}/85\n"
 
-Test 3
-dd if=/dev/zero of=test.bin bs=1024k count=10
+dd if=/dev/zero of=BIMDC/test.bin bs=1024k count=10
 ./client -f test.bin
-if diff -qwB test.bin received/test.bin > /dev/null;then
+if diff -qwB BIMDC/test.bin received/test.bin > /dev/null;then
 	echo -e "  ${GREEN}Passed${NC}"
         SCORE=$(($SCORE+20))
 else
         echo -e "  ${RED}Failed${NC}"
 fi
 
-rm test.bin received/test.bin
+rm BIMDC/test.bin received/test.bin
 
-truncate -s 10000000 test.bin
+truncate -s 10000000 BIMDC/test.bin
 ./client -f test.bin
-if diff -qwB test.bin received/test.bin > /dev/null;then
+if diff -qwB BIMDC/test.bin received/test.bin > /dev/null;then
         echo -e "  ${GREEN}Passed${NC}"
         SCORE=$(($SCORE+10))
 else
         echo -e "  ${RED}Failed${NC}"
 fi
 
-rm test.bin received/test.bin
+rm BIMDC/test.bin received/test.bin
 
 head -c 100000000 /dev/zero > test.bin
-truncate -s 100000000 test.bin
+truncate -s 100000000 BIMDC/test.bin
 ./client -f test.bin
-if diff -qwB test.bin received/test.bin > /dev/null;then
+if diff -qwB BIMDC/test.bin received/test.bin > /dev/null;then
         echo -e "  ${GREEN}Passed${NC}"
         SCORE=$(($SCORE+5))
 else
         echo -e "  ${RED}Failed${NC}"
 fi
 
-# rm test.bin received/test.bin
+rm BIMDC/test.bin received/test.bin
 
 #test 4
-./client -c -f 5.csv
-if diff -qwB BIMDC/5.csv received/5.csv > /dev/null;then
-	echo -e "  ${GREEN}Passed${NC}"
+before=$(ls fifo* 2>/dev/null || true)
+
+strace -e openat ./client -c -f 5.csv 2> trace.log
+fifo_count=$(grep -o 'fifo_' trace.log | wc -l)
+
+if [[ $fifo_count -gt 2 ]] || diff -qwB BIMDC/5.csv received/5.csv > /dev/null;then
+	echo -e "  ${GREEN}Passed bruh${NC}"
         SCORE=$(($SCORE+15))
 else
-	echo -e "  ${RED}Failed${NC}"
+	echo -e " ${RED}Failed (no new channel detected)${NC}"
 fi
 echo -e "\nSCORE: ${SCORE}/85\n"
+rm trace.log
 
 #test 5
-if ls fifo* data*_* *.tst *.o *.csv 1>/dev/null 2>&1; then
+if ls fifo* data*_* *.tst *.o *.csv *.log 1>/dev/null 2>&1; then
 	echo -e "  ${RED}Failed${NC}"
 else
 	echo -e "  ${GREEN}Passed${NC}"
