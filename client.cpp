@@ -87,10 +87,9 @@ int main (int argc, char *argv[]) {
 	// cout << chan.name() << endl;
 	// channels.pop_back();
 
-	char* buf = new char[0];
+	char* buf = nullptr;
 
 	if (filename.empty()) { // Requesting Data Points
-		delete [] buf;
 		buf = new char[m]; // buffer
 		system("mkdir -p received");
 
